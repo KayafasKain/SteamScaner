@@ -18,7 +18,7 @@ function SteamMiner(){
 			XMLparse(res, function( response ){
 
 
-				console.log("dasd "+response['response']['player_xp']);
+				//console.log("dasd "+response['response']['player_xp']);
 
 			    CommunitySummaries = {
 			    	player_xp: response['response']['player_xp'],
@@ -70,15 +70,15 @@ function SteamMiner(){
 
 			http.get('http://steamcommunity.com/id/'+userUrl+'/profile?tab=all&xml=1', function( res ) {
 				XMLparse(res, function( response ){
-				    var steamID = response['profile']['steamID64'];
+				    //var steamID = response['profile']['steamID64'];
 
-				    console.log("name:  "+response['profile']['steamID']);
+				   //console.log("name:  "+response['profile']['steamID']);
 				    AccountSummarise = {
-				    	id64: response['profile']['steamID64'],
-				    	UserName: response['profile']['steamID'],
-				    	Realname: response['profile']['realname'],
-				    	Avatar: response['profile']['avatarFull'],
-				    	MemberSince: response['profile']['memberSince'],
+				    	id64: response['profile']['steamID64'][0],
+				    	UserName: response['profile']['steamID'][0],
+				    	Realname: response['profile']['realname'][0],
+				    	Avatar: response['profile']['avatarFull'][0],
+				    	MemberSince: response['profile']['memberSince'][0],
 				    	UserUrl: profileUrl
 
 				    };
@@ -132,16 +132,18 @@ function SteamMiner(){
 
 	//parsing returned xml file
 	function XMLparse(res, callback){
-
-		JSON.stringify(""+res);
-
+		//console.log("answer to parse: "+res);
+		// parser.removeListener('exit', function(){
+		// 	console.log(" removed ");
+		// });		
 		var bodyChunks = [];
 		    res.on('data', function(chunk) {
 		    bodyChunks.push(chunk);
 		    }).on('end', function() {
 			    var body = Buffer.concat(bodyChunks);
 				parser.parseString(body, function (err, result) {
-	
+					//console.log("pasr  " + JSON.stringify(result));
+
 					var response = JSON.parse(JSON.stringify(result));
 				    callback(response);
 

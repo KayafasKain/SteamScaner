@@ -1,5 +1,5 @@
 var mongo = require('mongodb').MongoClient,
-	client = require('socket.io').listen(8080).sockets;
+	client = require('socket.io').listen(8899).sockets;
 	var http = require("http");
 	var xml2js = require('xml2js');
 	var parser = new xml2js.Parser();
@@ -11,15 +11,15 @@ var mongo = require('mongodb').MongoClient,
 		SteamMiner['SteamMiner'].getUser64ID(applicationKey, profUrl, function(steamID, userID){
 
 			//get account summaries
-			console.log(userID);
-			if (userID != null) {
+			console.log( "  userid "  + userID);
+			if (userID != null && userID != undefined) {
 				console.log("  by superid!");
 				SteamMiner['SteamMiner'].GetAccountSummariesByID(userID, profUrl, function( AccountSummarise ){
-					socket.emit('outputAccountSummaries', [AccountSummarise]);
+					socket.emit('outputAccountSummaries', AccountSummarise);
 				});
 			}else{
 				SteamMiner['SteamMiner'].GetAccountSummaries(steamID, profUrl, function( AccountSummarise ){
-					socket.emit('outputAccountSummaries', [AccountSummarise]);
+					socket.emit('outputAccountSummaries', AccountSummarise);
 				});
 			}
 
@@ -35,15 +35,16 @@ var mongo = require('mongodb').MongoClient,
 				//calculate and send games/hours played ratio
 					var playedHours = 0;
 					for(var i = 0; i < ownedGames.response.game_count; i++){
-						playedHours += ownedGames.response.games[0].message[i].playtime_forever;
+						playedHours += parseInt(ownedGames.response.games[0].message[i].playtime_forever, 10)/60;
 					}
 
 					var gamePlayed = {
 						GameCount: ownedGames.response.game_count,
-						TotalHoursPlayed: playedHours
+						TotalHoursPlayed: playedHours,
+						UserUrl: currentUserUrl
 					}
 
-					socket.emit('outputGamePlayedInfo', [gamePlayed]);
+					socket.emit('outputGamePlayedInfo', gamePlayed);
 
 				//calculate and send achievements count 
 					for(var i = 0; i < ownedGames.response.game_count; i++){
@@ -52,11 +53,11 @@ var mongo = require('mongodb').MongoClient,
 						SteamMiner['SteamMiner'].sendAchieventCount(appid, applicationKey, steam64ID, currentUserUrl, function(count, curUserUrl ){
 
 							var sendObject = {
-								curUserUrl: curUserUrl,
-								GameAchievementsCount: count
+								GameAchievementsCount: count,
+								UserUrl: curUserUrl
 							};
 							
-							socket.emit('outputAchieveCount', [sendObject]);
+							socket.emit('outputAchieveCount', sendObject);
 
 						});
 					}
@@ -85,15 +86,16 @@ var mongo = require('mongodb').MongoClient,
 			console.log("process begin...");
 			console.log("first url is: "+firstURL);
 			console.log("second url is: "+secondURL);
+
 			//executing first user
 			executeUser(socket, firstURL, applicationKey, function( message ){
 				console.log( message );
 			});
 
-			// //executing second user
-			// executeUser(socket, secondURL, applicationKey, function( message ){
-			// 	console.log( message );
-			// });
+			//executing second user
+			executeUser(socket, secondURL, applicationKey, function( message ){
+			 	console.log( message );
+			});
 
 		});
 
