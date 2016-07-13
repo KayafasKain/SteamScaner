@@ -1,6 +1,56 @@
+h1 {
+  color: #B0BEC5; }
+
+ul {
+  list-style: none; }
+  ul li:first-child {
+    padding-bottom: 20px; }
+  ul li:last-child {
+    color: #E8B018;
+    font-size: 40px; }
+
+body {
+  background-color: #263238; }
+
+.user {
+  margin: 0 !important; }
+
 .logo {
   text-align: center;
   color: blue; }
 
 .main {
   text-align: center; }
+
+.user-info {
+  padding: 20px;
+  text-align: center;
+  background-color: #455A64;
+  width: 100%;
+  display: inline-block; }
+  .user-info ul {
+    font-size: 20px;
+    color: #B0BEC5;
+    text-align: left;
+    padding: 4%; }
+
+.GoButton {
+  width: 40%;
+  height: 50px;
+  margin: 40px;
+  border: none;
+  border-radius: 5px;
+  background-color: #2E7D32;
+  color: #EFF0E0;
+  font-size: 30px;
+  transition-property: border-radius, color;
+  transition-duration: 1s; }
+
+.GoButton:hover {
+  position: relative;
+  border-radius: 90px 0px 90px 0px;
+  transition: all ease-in-out 0.7s;
+  transition-timing-function: ease-in-out;
+  color: black;
+  background: linear-gradient(to bottom right, red, yellow);
+  /* Standard syntax */ }

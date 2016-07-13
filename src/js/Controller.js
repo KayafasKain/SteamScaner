@@ -3,36 +3,42 @@ var app = angular.module('myApp', []);
 app.controller('Control', function($scope, $http) {
 	DATA = this;
 
-	DATA.firstUSER = {
-		ProfileURL: "",
-		player_xp: "",
-		player_level: "",
-		Realname: "",
-		UserName: "",
-		Avatar: "",
-		MemberSince: "",
-		GameCount: 0,
-		TotalHoursPlayed: 0,
-		GameAchievementsCount: 0,
-		HoursPerGame: 0,
-		AchievementsPerGame: 0,
-		TotalScore: 0		
-	}
+	DATA.firstUSER = {};
+	DATA.secondUSER = {};
+	DATA.refresh = function(){
+		DATA.firstUSER = {
+			ProfileURL: "",
+			player_xp: 1,
+			player_level: 1,
+			Realname: "",
+			UserName: "",
+			Avatar: "",
+			MemberSince: "",
+			GameCount: 0,
+			TotalHoursPlayed: 0,
+			GameAchievementsCount: 0,
+			HoursPerGame: 0,
+			AchievementsPerGame: 0,
+			TotalScore: 0,
+			actionComplete: 0	
+		}
 
-	DATA.secondUSER = {
-		ProfileURL: "",
-		player_xp: "",
-		player_level: "",
-		Realname: "",
-		UserName: "",
-		Avatar: "",
-		MemberSince: "",
-		GameCount: 0,
-		TotalHoursPlayed: 0,
-		GameAchievementsCount: 0,
-		HoursPerGame: 0,
-		AchievementsPerGame: 0,
-		TotalScore: 0
+		DATA.secondUSER = {
+			ProfileURL: "",
+			player_xp: 1,
+			player_level: 1,
+			Realname: "",
+			UserName: "",
+			Avatar: "",
+			MemberSince: "",
+			GameCount: 0,
+			TotalHoursPlayed: 0,
+			GameAchievementsCount: 0,
+			HoursPerGame: 0,
+			AchievementsPerGame: 0,
+			TotalScore: 0,
+			actionComplete: 0
+		}
 	}
 	console.log(DATA.firstUSER.ProfileURL);
 
@@ -45,21 +51,39 @@ app.controller('Control', function($scope, $http) {
 		alert("connection lost");
 	}
 
+	DATA.firstUsrUrl = '';
+	DATA.secondUsrUrl = '';
 	DATA.test = function(){
-		console.log(DATA.firstUSER.ProfileURL);
-		socket.emit('input',{
-			firstURL: DATA.firstUSER.ProfileURL,
-			secondURL: DATA.secondUSER.ProfileURL
-		});			
+
+	DATA.refresh();
+
+
+		if(DATA.firstUsrUrl.length > 0 && DATA.secondUsrUrl.length > 0){
+
+			DATA.firstUSER.ProfileURL = DATA.firstUsrUrl;
+			DATA.secondUSER.ProfileURL = DATA.secondUsrUrl;
+
+			socket.emit('input',{
+				firstURL: DATA.firstUSER.ProfileURL,
+				secondURL: DATA.secondUSER.ProfileURL
+			});	
+		}
+
+
 	}
 
 //LISTEN SERVER OUTPUT SECTION =====================================
 	if(socket !== undefined){
 		console.log("connection stable...");
 
+		socket.on('err', function( data ){
+			alert(data);
+			DATA.refresh();
+		});
+
 		//gathering player summeries
 		socket.on('outputAccountSummaries', function( data ){			
-
+				console.log(data);
 				switch(data.UserUrl){
 					case DATA.firstUSER.ProfileURL:
 
@@ -92,15 +116,15 @@ app.controller('Control', function($scope, $http) {
 				switch(data.UserUrl){
 					case DATA.firstUSER.ProfileURL:
 
-						DATA.firstUSER.player_xp = data.player_xp[0];
-						DATA.firstUSER.player_level = data.player_level[0];
+						DATA.firstUSER.player_xp = parseInt(data.player_xp[0], 10);
+						DATA.firstUSER.player_level = parseInt(data.player_level[0], 10);
 
 						break;
 
 					case DATA.secondUSER.ProfileURL:
 	
-						DATA.secondUSER.player_xp = data.player_xp[0];
-						DATA.secondUSER.player_level = data.player_level[0];	
+						DATA.secondUSER.player_xp = parseInt(data.player_xp[0], 10);
+						DATA.secondUSER.player_level = parseInt(data.player_level[0], 10);	
 
 						break;			
 				}
@@ -119,16 +143,16 @@ app.controller('Control', function($scope, $http) {
 					switch(data.UserUrl){
 						case DATA.firstUSER.ProfileURL:
 
-							DATA.firstUSER.GameCount = data.GameCount[0];
-							DATA.firstUSER.TotalHoursPlayed = data.TotalHoursPlayed;
+							DATA.firstUSER.GameCount = parseInt(data.GameCount[0], 10);
+							DATA.firstUSER.TotalHoursPlayed = Math.round(data.TotalHoursPlayed);
 							DATA.firstUSER.HoursPerGame = DATA.calcHoursPerGame(data.GameCount, data.TotalHoursPlayed);
 
 							break;
 
 						case DATA.secondUSER.ProfileURL:
 		
-							DATA.secondUSER.GameCount = data.GameCount[0];
-							DATA.secondUSER.TotalHoursPlayed = data.TotalHoursPlayed;
+							DATA.secondUSER.GameCount = parseInt(data.GameCount[0], 10);
+							DATA.secondUSER.TotalHoursPlayed = Math.round(data.TotalHoursPlayed);
 							DATA.secondUSER.HoursPerGame = DATA.calcHoursPerGame(data.GameCount, data.TotalHoursPlayed);
 
 							break;			
@@ -142,6 +166,7 @@ app.controller('Control', function($scope, $http) {
 			});
 
 			//get count of achievements per game, total achievements count calculated at the client side
+			//turned off!
 			socket.on('outputAchieveCount', function( data ){			
 
 					switch(data.UserUrl){
@@ -173,13 +198,14 @@ app.controller('Control', function($scope, $http) {
 //CALCULATING AREA ================================================================
 	//calculate user HoursPerGame
 	DATA.calcHoursPerGame = function(games, hours){
-		return (parseInt(hours, 10)/parseInt(games, 10));
+		return Math.round(parseInt(hours, 10)/parseInt(games, 10));
 	}
 
 	//calculate user achievem
+	//turned off
 	DATA.calcAchievementsPerGame = function(games, achievements){
 		console.log("ach " + achievements + " games " + games);
-		return (parseInt(achievements, 10)/parseInt(games, 10));
+		return Math.round(parseInt(achievements, 10)/parseInt(games, 10));
 	}
 
 	//calculate total score !WORKS WITH A GLOBAL VARIABLES!
@@ -187,10 +213,21 @@ app.controller('Control', function($scope, $http) {
 	//score calculation formula:
 	//TotalScore = player_xp + ((GameCount + TotalHoursPlayed + AchievementsPerGame)*HoursPerGame*AchievementsPerGame)
 	DATA.calculateUserScore = function(){
-		//calculate first user score
-		DATA.firstUSER.TotalScore = DATA.firstUSER.player_xp + ((DATA.firstUSER.GameCount + DATA.firstUSER.TotalHoursPlayed + DATA.firstUSER.AchievementsPerGame)*DATA.firstUSER.HoursPerGame*DATA.firstUSER.AchievementsPerGame);
 
-		DATA.secondUSER.TotalScore = DATA.secondUSER.player_xp + ((DATA.secondUSER.GameCount + DATA.secondUSER.TotalHoursPlayed + DATA.secondUSER.AchievementsPerGame)*DATA.secondUSER.HoursPerGame*DATA.secondUSER.AchievementsPerGame);
+		//to make the score numbers less
+		var divCoef = 100;
+
+		//calculate first user score
+		DATA.firstUSER.TotalScore = Math.round((DATA.firstUSER.player_xp/DATA.firstUSER.player_level+1) + ((DATA.firstUSER.GameCount + DATA.firstUSER.TotalHoursPlayed)*DATA.firstUSER.HoursPerGame));
+
+		DATA.secondUSER.TotalScore = Math.round((DATA.secondUSER.player_xp/DATA.secondUSER.player_level+1) + ((DATA.secondUSER.GameCount + DATA.secondUSER.TotalHoursPlayed)*DATA.secondUSER.HoursPerGame));
+
+		console.log("first user: "+DATA.firstUSER.TotalScore);
+		console.log("second user: "+DATA.secondUSER.TotalScore);
+
+		DATA.firstUSER.TotalScore += 1;
+		DATA.secondUSER.TotalScore += 1;
+		$scope.$apply();
 
 	}
 

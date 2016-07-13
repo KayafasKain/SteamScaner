@@ -75,9 +75,9 @@ function SteamMiner(){
 				   //console.log("name:  "+response['profile']['steamID']);
 				    AccountSummarise = {
 				    	id64: response['profile']['steamID64'][0],
-				    	UserName: response['profile']['steamID'][0],
+				    	UserName: response['profile']['steamID'],
 				    	Realname: response['profile']['realname'][0],
-				    	Avatar: response['profile']['avatarFull'][0],
+				    	Avatar: response['profile']['avatarFull'],
 				    	MemberSince: response['profile']['memberSince'][0],
 				    	UserUrl: profileUrl
 
@@ -115,13 +115,15 @@ function SteamMiner(){
 	    http.get('http://api.steampowered.com/ISteamUserStats/GetUserStatsForGame/v0002/?appid='+appid+'&key='+key+'&steamid='+steam64ID+'&format=xml', function(res){
 			XMLparse(res,function( response ){
 				var count = 0;
-				if(response.playerstats.achievements != undefined){
-					// for(achieve in response.playerstats.achievements){
-					// 	console.log(' iside achiev ' + JSON.stringify(response.playerstats.achievements[0].achievement));	
-					// }
-					var count = response.playerstats.achievements[0].achievement.length;
-					//console.log( "number of achievents " + count);
+				if(response.playerstats != undefined){
+					if(response.playerstats.achievements != undefined){
+						// for(achieve in response.playerstats.achievements){
+						// 	console.log(' iside achiev ' + JSON.stringify(response.playerstats.achievements[0].achievement));	
+						// }
+						var count = response.playerstats.achievements[0].achievement.length;
+						//console.log( "number of achievents " + count);
 
+					}
 				}
 				callback(count, currentUserUrl );
 			});
@@ -129,26 +131,29 @@ function SteamMiner(){
 		});
 	}
 
-
+	parser.setMaxListeners(400);
 	//parsing returned xml file
 	function XMLparse(res, callback){
-		//console.log("answer to parse: "+res);
-		// parser.removeListener('exit', function(){
-		// 	console.log(" removed ");
-		// });		
-		var bodyChunks = [];
-		    res.on('data', function(chunk) {
-		    bodyChunks.push(chunk);
-		    }).on('end', function() {
-			    var body = Buffer.concat(bodyChunks);
-				parser.parseString(body, function (err, result) {
-					//console.log("pasr  " + JSON.stringify(result));
+		//console.log("answer to parse: "+res);	
+		try{
+			var bodyChunks = [];
+			    res.on('data', function(chunk) {
+			    bodyChunks.push(chunk);
+			    }).on('end', function() {
+				    var body = Buffer.concat(bodyChunks);
+					parser.parseString(body, function (err, result) {
+						//console.log("pasr  " + JSON.stringify(result));
 
-					var response = JSON.parse(JSON.stringify(result));
-				    callback(response);
+						var response = JSON.parse(JSON.stringify(result));
+					    callback(response);
 
+				});
 			});
-		});		
+		}catch(err){
+			var errorMessage = "unable to find user data";
+			console.log(errorMessage);
+		}
+
 	}	
 
 

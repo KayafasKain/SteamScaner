@@ -1,3 +1,31 @@
+$user-infoBackColor:#455A64;
+$nodyBackColor:#263238;
+$mainFontColor:#B0BEC5;
+$buttonColor:#2E7D32;
+$buttonFontColor:#EFF0E0;
+
+h1{
+	color:$mainFontColor;
+}
+
+ul{
+	list-style:none;
+	li:first-child{
+		padding-bottom:20px;
+	}
+	li:last-child{
+		color:#E8B018;
+		font-size: 40px;
+	}
+}
+
+body{
+	background-color:$nodyBackColor;
+
+}
+.user{
+	margin: 0!important;
+}
 .logo{
 	text-align: center;
 	color: blue;
@@ -5,3 +33,41 @@
 .main{
 	text-align: center;
 }
+.user-info{
+	padding: 20px;
+	text-align: center;
+	background-color: $user-infoBackColor;
+	width: 100%;
+	display: inline-block;
+	ul{
+		font-size: 20px;
+		color:$mainFontColor;
+		text-align: left;
+		padding: 4%;
+	}
+}
+.GoButton{
+	width:40%;
+	height: 50px;
+	margin: 40px;
+	border:none;
+	border-radius: 5px;
+	background-color: $buttonColor;
+	color:$buttonFontColor;
+	font-size: 30px;
+
+    transition-property: border-radius, color;
+    transition-duration: 1s;
+    //transition-delay: 2s;
+
+}
+.GoButton:hover{
+	position: relative;
+	border-radius: 90px 0px 90px 0px;
+	transition: all ease-in-out 0.7s;
+	transition-timing-function: ease-in-out;
+	color:black;
+	background: linear-gradient(to bottom right, red, yellow); /* Standard syntax */
+}
+
+
