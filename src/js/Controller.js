@@ -5,6 +5,7 @@ app.controller('Control', function($scope, $http) {
 
 	DATA.firstUSER = {};
 	DATA.secondUSER = {};
+
 	DATA.refresh = function(){
 		DATA.firstUSER = {
 			ProfileURL: "",
@@ -40,8 +41,6 @@ app.controller('Control', function($scope, $http) {
 			actionComplete: 0
 		}
 	}
-	console.log(DATA.firstUSER.ProfileURL);
-
 
 	//connecting to the server
 	try {
@@ -59,14 +58,21 @@ app.controller('Control', function($scope, $http) {
 
 
 		if(DATA.firstUsrUrl.length > 0 && DATA.secondUsrUrl.length > 0){
+			if(DATA.firstUsrUrl != DATA.secondUsrUrl){
 
-			DATA.firstUSER.ProfileURL = DATA.firstUsrUrl;
-			DATA.secondUSER.ProfileURL = DATA.secondUsrUrl;
+				DATA.firstUSER.ProfileURL = DATA.firstUsrUrl;
+				DATA.secondUSER.ProfileURL = DATA.secondUsrUrl;
 
-			socket.emit('input',{
-				firstURL: DATA.firstUSER.ProfileURL,
-				secondURL: DATA.secondUSER.ProfileURL
-			});	
+				socket.emit('input',{
+					firstURL: DATA.firstUSER.ProfileURL,
+					secondURL: DATA.secondUSER.ProfileURL
+				});	
+			}else{
+				alert("The urls must be different!");
+			}
+
+		}else{
+			alert("Url fields are empty!");
 		}
 
 
@@ -211,6 +217,7 @@ app.controller('Control', function($scope, $http) {
 	//calculate total score !WORKS WITH A GLOBAL VARIABLES!
 	//calls in the every listener
 	//score calculation formula:
+	//warning! Achievements disablet in default mode
 	//TotalScore = player_xp + ((GameCount + TotalHoursPlayed + AchievementsPerGame)*HoursPerGame*AchievementsPerGame)
 	DATA.calculateUserScore = function(){
 
@@ -222,11 +229,6 @@ app.controller('Control', function($scope, $http) {
 
 		DATA.secondUSER.TotalScore = Math.round((DATA.secondUSER.player_xp/DATA.secondUSER.player_level+1) + ((DATA.secondUSER.GameCount + DATA.secondUSER.TotalHoursPlayed)*DATA.secondUSER.HoursPerGame));
 
-		console.log("first user: "+DATA.firstUSER.TotalScore);
-		console.log("second user: "+DATA.secondUSER.TotalScore);
-
-		DATA.firstUSER.TotalScore += 1;
-		DATA.secondUSER.TotalScore += 1;
 		$scope.$apply();
 
 	}
