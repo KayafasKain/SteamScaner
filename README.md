@@ -14,9 +14,10 @@
     <img src = "src/media/img/big pic.png" alt="result">
     
     <h3>Detail info</h3>
+    <section>
     The  server asynchronously gather information using Steam web api and send it to the client, where Angularjs catch these information and calculate the score.
 
     Current score formula is: TotalScore = player_xp/player_lvl + ((GameCount + TotalHoursPlayed + AchievementsPerGame)*HoursPerGame)
-    
+    </section>
   </section>
 </article>
