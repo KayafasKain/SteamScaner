@@ -1,0 +1,20 @@
+{
+  "name": "steam_scaner",
+  "version": "1.0.3",
+  "description": "service for comparing a steam accounts ",
+  "main": "server.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node server.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/KayafasKain/SteamScaner.git"
+  },
+  "author": "KayafasKain",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/KayafasKain/SteamScaner/issues"
+  },
+  "homepage": "https://github.com/KayafasKain/SteamScaner#readme"
+}
